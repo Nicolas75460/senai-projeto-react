@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Rocket, 
   Code, 
@@ -9,10 +9,33 @@ import {
   Zap, 
   Layers, 
   Cpu, 
-  Terminal 
+  Terminal,
+  Target,
+  Plus,
+  Minus
 } from 'lucide-react';
 
 export default function HeroStats({ setActiveTab }) {
+  const [studyGoal, setStudyGoal] = useState(() => Number(localStorage.getItem('senai_study_goal')) || 4);
+  const [completedHours, setCompletedHours] = useState(() => Number(localStorage.getItem('senai_completed_hours')) || 0);
+
+  useEffect(() => {
+    localStorage.setItem('senai_study_goal', studyGoal);
+    localStorage.setItem('senai_completed_hours', completedHours);
+  }, [studyGoal, completedHours]);
+
+  const progress = Math.min(100, Math.round((completedHours / studyGoal) * 100));
+
+  const updateCompletedHours = (amount) => {
+    setCompletedHours((currentHours) => Math.max(0, Math.min(studyGoal, currentHours + amount)));
+  };
+
+  const updateStudyGoal = (event) => {
+    const nextGoal = Math.max(1, Math.min(12, Number(event.target.value) || 1));
+    setStudyGoal(nextGoal);
+    setCompletedHours((currentHours) => Math.min(currentHours, nextGoal));
+  };
+
   const stats = [
     { title: 'Projetos no Hub', value: '6 Módulos', icon: Layers, color: 'blue', desc: 'Demos interativas ativas' },
     { title: 'Horas de Código', value: '45h+', icon: Clock, color: 'cyan', desc: 'Prática React & JS' },
@@ -108,6 +131,40 @@ export default function HeroStats({ setActiveTab }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="study-goal-card glass-card">
+        <div className="study-goal-heading">
+          <div className="stat-icon icon-cyan">
+            <Target size={22} />
+          </div>
+          <div>
+            <h3>Meta diária de estudo</h3>
+            <p>Registre seu progresso e mantenha o ritmo.</p>
+          </div>
+          <label className="goal-input-label">
+            <span>Meta</span>
+            <input type="number" min="1" max="12" value={studyGoal} onChange={updateStudyGoal} aria-label="Meta diária em horas" />
+            <span>h</span>
+          </label>
+        </div>
+        <div className="study-goal-progress">
+          <div className="progress-info">
+            <span>{completedHours}h concluídas de {studyGoal}h</span>
+            <strong>{progress}%</strong>
+          </div>
+          <div className="progress-bar-bg" aria-label={`${progress}% da meta concluída`}>
+            <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <div className="study-goal-actions">
+          <button className="btn btn-secondary btn-sm" onClick={() => updateCompletedHours(-1)} disabled={completedHours === 0}>
+            <Minus size={16} /> Remover 1h
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={() => updateCompletedHours(1)} disabled={completedHours === studyGoal}>
+            <Plus size={16} /> Registrar 1h
+          </button>
+        </div>
       </div>
 
       {/* Seção de Módulos Rápidos */}

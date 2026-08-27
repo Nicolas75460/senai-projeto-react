@@ -61,6 +61,7 @@ Abra o endereço exibido no terminal, normalmente [http://localhost:5173](http:/
 - Feed de tecnologia.
 - Cheatsheet de React.
 - Quiz interativo.
+- Meta diária de estudo com registro de horas e persistência no navegador.
 - Alternância entre tema claro e escuro, preservada no navegador.
 
 ## Estrutura principal
